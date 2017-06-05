@@ -4,6 +4,10 @@ The project is searching for a new maintainer.
 If anybody is interested please let us know (@ingo86 or @davidthou).
 Thanks.
 
+From @mrlowe: The best-maintained fork of this repo seems to be [madebycaliper/grunt-wordpress-deploy](https://github.com/madebycaliper/grunt-wordpress-deploy),
+but I'm not needing some of those changes, and I definitely don't want the coffeescript,
+so I'm just going to tweak the original repo to suit my purposes.
+
 # Instructions
 
 Deploy a Wordpress instance without pain using Grunt.

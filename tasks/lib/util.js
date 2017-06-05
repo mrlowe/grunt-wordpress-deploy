@@ -144,7 +144,7 @@ exports.init = function (grunt) {
         pass: config.pass,
         database: config.database,
         host: config.host,
-        port: config.dbport || 3306
+        port: config.port || 3306
       }
     });
 
@@ -171,7 +171,7 @@ exports.init = function (grunt) {
         pass: config.pass,
         database: config.database,
         path: src,
-        port: config.dbport || 3306
+        port: config.port || 3306
       }
     });
 

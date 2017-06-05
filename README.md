@@ -8,6 +8,10 @@ From @mrlowe: The best-maintained fork of this repo seems to be [madebycaliper/g
 but I'm not needing some of those changes, and I definitely don't want the coffeescript,
 so I'm just going to tweak the original repo to suit my purposes.
 
+NPM install locally using:
+
+`npm install git+https://github.com/mrlowe/grunt-wordpress-deploy --save-dev`
+
 # Instructions
 
 Deploy a Wordpress instance without pain using Grunt.
@@ -60,6 +64,7 @@ module.exports = function(grunt) {
         "user": "database_username",
         "pass": "database_password",
         "host": "database_host",
+        "port": 3306,
         "url": "http://local_url",
         "path": "/local_path"
       },
@@ -185,6 +190,11 @@ Description: the password for the database user (above)
 Type: `String`
 
 Description: the hostname for the location in which the database resides.
+
+#### port
+Type: `Int`
+
+Description: the port to be used for database access.
 
 #### url
 Type: `String`

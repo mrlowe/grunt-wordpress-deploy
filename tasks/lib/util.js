@@ -95,6 +95,9 @@ exports.init = function (grunt) {
     content = exports.replace_urls_in_serialized(search, replace, content);
     content = exports.replace_urls_in_string(search, replace, content);
 
+    // downgrade collation
+    content = exports.replace_urls_in_string("utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci", content)
+
     return content;
   };
 

@@ -91,12 +91,12 @@ exports.init = function (grunt) {
     {
         for(var i=0; i<sql_replacements.length; ++i)
         {
-            if (v.length != 2)
+            if (sql_replacements[i].length != 2)
             {
                 grunt.log.oklns("ERROR: Invalid sql_replacement.");
             } else {
-                grunt.log.oklns(v[0] + "->" + v[1]);
-                output = exports.replace_urls_in_string(v[0], v[1], output);
+                grunt.log.oklns(sql_replacements[i][0] + "->" + sql_replacements[i][1]);
+                output = exports.replace_urls_in_string(sql_replacements[i][0], sql_replacements[i][1], output);
             }
         }
         //output = exports.replace_urls_in_string("utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci", output);

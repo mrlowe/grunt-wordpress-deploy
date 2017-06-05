@@ -95,11 +95,10 @@ exports.init = function (grunt) {
             {
                 grunt.log.oklns("ERROR: Invalid sql_replacement.");
             } else {
-                grunt.log.oklns(sql_replacements[i][0] + "->" + sql_replacements[i][1]);
+                grunt.log.oklns("Adapting " + sql_replacements[i][0] + "->" + sql_replacements[i][1]);
                 output = exports.replace_urls_in_string(sql_replacements[i][0], sql_replacements[i][1], output);
             }
         }
-        //output = exports.replace_urls_in_string("utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci", output);
     }
 
     grunt.file.write(file, output);

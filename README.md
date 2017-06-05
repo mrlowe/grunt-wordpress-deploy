@@ -68,7 +68,10 @@ module.exports = function(grunt) {
         "host": "database_host",
         "port": 3306,
         "url": "http://local_url",
-        "path": "/local_path"
+        "path": "/local_path",
+        "sql_replacements": [
+            ["utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci"]
+        ]
       },
       staging: {
         "title": "staging",
@@ -212,6 +215,12 @@ Description: the path of the the installation files on the filesystem. Used by r
 Type: `String`
 
 Description: ssh connection string in the format `SSH_USER@SSH_HOST`. The task assumes you have ssh keys setup which allow you to remote into your server without requiring the input of a password.
+
+#### sql_replacements
+Type: `Array`
+
+Array of two-item arrays indicating strings that should be found and replaced in the sql file before importing.
+Useful for tweaking the db import script. The replacement will only be done when the given environment is the destination.
 
 ### Options
 

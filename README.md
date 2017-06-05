@@ -10,7 +10,9 @@ so I'm just going to tweak the original repo to suit my purposes.
 
 NPM install locally using:
 
-`npm install git+https://github.com/mrlowe/grunt-wordpress-deploy --save-dev`
+```shell
+npm install git+https://github.com/mrlowe/grunt-wordpress-deploy --save-dev
+```
 
 # Instructions
 

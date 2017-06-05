@@ -89,7 +89,7 @@ exports.init = function (grunt) {
     var output = exports.replace_urls(old_url, new_url, content);
     if (sql_replacements)
     {
-        foreach(v in sql_replacements)
+        for(var i=0; i<sql_replacements.length; ++i)
         {
             if (v.length != 2)
             {

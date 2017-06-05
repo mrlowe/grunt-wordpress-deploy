@@ -82,11 +82,25 @@ exports.init = function (grunt) {
     return exclusions;
   };
 
-  exports.db_adapt = function(old_url, new_url, file) {
+  exports.db_adapt = function(old_url, new_url, sql_replacements, file) {
     grunt.log.oklns("Adapt the database: set the correct urls for the destination in the database.");
     var content = grunt.file.read(file);
 
     var output = exports.replace_urls(old_url, new_url, content);
+    if (sql_replacements)
+    {
+        foreach(v in sql_replacements)
+        {
+            if (v.length != 2)
+            {
+                grunt.log.oklns("ERROR: Invalid sql_replacement.");
+            } else {
+                grunt.log.oklns(v[0] + "->" + v[1]);
+                output = exports.replace_urls_in_string(v[0], v[1], output);
+            }
+        }
+        //output = exports.replace_urls_in_string("utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci", output);
+    }
 
     grunt.file.write(file, output);
   };
@@ -94,9 +108,6 @@ exports.init = function (grunt) {
   exports.replace_urls = function(search, replace, content) {
     content = exports.replace_urls_in_serialized(search, replace, content);
     content = exports.replace_urls_in_string(search, replace, content);
-
-    // downgrade collation
-    content = exports.replace_urls_in_string("utf8mb4_unicode_520_ci", "utf8mb4_unicode_ci", content)
 
     return content;
   };

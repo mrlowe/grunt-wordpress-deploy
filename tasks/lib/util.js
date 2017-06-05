@@ -143,7 +143,8 @@ exports.init = function (grunt) {
         user: config.user,
         pass: config.pass,
         database: config.database,
-        host: config.host
+        host: config.host,
+        port: config.dbport || 3306
       }
     });
 
@@ -169,7 +170,8 @@ exports.init = function (grunt) {
         user: config.user,
         pass: config.pass,
         database: config.database,
-        path: src
+        path: src,
+        port: config.dbport || 3306
       }
     });
 
@@ -220,8 +222,8 @@ exports.init = function (grunt) {
 
   var tpls = {
     backup_path: "<%= backups_dir %>/<%= env %>/<%= date %>/<%= time %>",
-    mysqldump: "mysqldump -h <%= host %> -u<%= user %> -p<%= pass %> <%= database %>",
-    mysql: "mysql -h <%= host %> -u <%= user %> -p<%= pass %> <%= database %>",
+    mysqldump: "MYSQL_PWD=<%= pass %> mysqldump -h <%= host %> -u<%= user %> -P<%= port %> <%= database %>",
+    mysql: "MYSQL_PWD=<%= pass %> mysql -h <%= host %> -u <%= user %> -P<%= port %> <%= database %>",
     rsync_push: "rsync <%= rsync_args %> --delete -e 'ssh <%= ssh_host %>' <%= exclusions %> <%= from %> :<%= to %>",
     rsync_pull: "rsync <%= rsync_args %> -e 'ssh <%= ssh_host %>' <%= exclusions %> :<%= from %> <%= to %>",
     ssh: "ssh <%= host %>",

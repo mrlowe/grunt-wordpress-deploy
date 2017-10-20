@@ -149,4 +149,38 @@ module.exports = function(grunt) {
 
     util.rsync_pull(config);
   });
+
+  /**
+   * Transform DB
+   * Dump a database and then tweak the export
+   */
+  grunt.registerTask("transform_db", "Export a database dump file and tweak it if necessary", function () {
+
+          var task_options = grunt.config.get('wordpressdeploy')['options'];
+          var target       = grunt.option('target') || task_options['target'];
+
+          if ( typeof target === "undefined" || typeof grunt.config.get('wordpressdeploy')[target] === "undefined")  {
+            grunt.fail.warn("Invalid target provided. I cannot pull a database from nowhere! Please checked your configuration and provide a valid target.", 6);
+          }
+
+          // Grab the options
+          var target_options      = grunt.config.get('wordpressdeploy')[target];
+          var transform_options       = grunt.config.get('wordpressdeploy').transform;
+
+          // If the transform wants strings ignored, ignore them when dumping
+          target_options.ignore = transform_options.ignore;
+
+          // Generate required backup directories and paths
+          var target_backup_paths = util.generate_backup_paths(target, task_options);
+
+          // Start execution
+          grunt.log.subhead("Exporting database from '" + target_options.title + "' and adapting");
+
+          // Dump Target DB
+          util.db_dump(target_options, target_backup_paths );
+
+          util.db_adapt(target_options.url, transform_options.url, transform_options.sql_replacements, target_backup_paths.file);
+
+          grunt.log.subhead("Operations completed");
+  });
 };

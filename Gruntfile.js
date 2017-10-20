@@ -49,6 +49,13 @@ module.exports = function(grunt) {
         url: 'url_staging',
         path: 'path_staging',
         ssh_host: 'ssh_staging'
+      },
+      transform: {
+        "title": "transform",
+        "host": "transform.com",
+        "url": "https://transform.com",
+        "sql_replacements": [],
+        "ignore": ["dbname.tablename","dbname.tablename"]
       }
     },
 

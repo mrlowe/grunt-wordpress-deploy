@@ -151,13 +151,24 @@ exports.init = function (grunt) {
 
   /* Commands generators */
   exports.mysqldump_cmd = function(config) {
+
+    var ignore_str = "";
+    if (config.ignore) {
+        if (config.ignore.length == 1) {
+            ignore_str = "--ignore-table=" + config.ignore[0];
+        } else {
+            ignore_str = "--ignore-table={" + config.ignore.join(",") + "}";
+        }
+    }
+
     var cmd = grunt.template.process(tpls.mysqldump, {
       data: {
         user: config.user,
         pass: config.pass,
         database: config.database,
         host: config.host,
-        port: config.port || 3306
+        port: config.port || 3306,
+        ignore: ignore_str
       }
     });
 
@@ -206,10 +217,19 @@ exports.init = function (grunt) {
   };
 
   exports.rsync_push_cmd = function(config) {
+
+    var ssh_host = "";
+    var ssh_prefix = "";
+    if (config.ssh_host) {
+        ssh_host = "-e 'ssh " + config.ssh_host + "' ";
+        ssh_prefix = ":";
+    }
+
     var cmd = grunt.template.process(tpls.rsync_push, {
       data: {
         rsync_args: config.rsync_args,
-        ssh_host: config.ssh_host,
+        ssh_host: ssh_host,
+        ssh_prefix: ssh_prefix,
         from: config.from,
         to: config.to,
         exclusions: config.exclusions
@@ -220,10 +240,19 @@ exports.init = function (grunt) {
   };
 
   exports.rsync_pull_cmd = function(config) {
+
+    var ssh_host = "";
+    var ssh_prefix = "";
+    if (config.ssh_host) {
+        ssh_host = "-e 'ssh " + config.ssh_host + "' ";
+        ssh_prefix = ":";
+    }
+
     var cmd = grunt.template.process(tpls.rsync_pull, {
       data: {
         rsync_args: config.rsync_args,
-        ssh_host: config.ssh_host,
+        ssh_host: ssh_host,
+        ssh_prefix: ssh_prefix,
         from: config.from,
         to: config.to,
         exclusions: config.exclusions
@@ -235,10 +264,10 @@ exports.init = function (grunt) {
 
   var tpls = {
     backup_path: "<%= backups_dir %>/<%= env %>/<%= date %>/<%= time %>",
-    mysqldump: "MYSQL_PWD=\"<%= pass %>\" mysqldump -h <%= host %> -u<%= user %> -P<%= port %> <%= database %>",
+    mysqldump: "MYSQL_PWD=\"<%= pass %>\" mysqldump -h <%= host %> -u<%= user %> -P<%= port %> <%= ignore %> <%= database %>",
     mysql: "MYSQL_PWD=\"<%= pass %>\" mysql -h <%= host %> -u <%= user %> -P<%= port %> <%= database %>",
-    rsync_push: "rsync <%= rsync_args %> --delete -e 'ssh <%= ssh_host %>' <%= exclusions %> <%= from %> :<%= to %>",
-    rsync_pull: "rsync <%= rsync_args %> -e 'ssh <%= ssh_host %>' <%= exclusions %> :<%= from %> <%= to %>",
+    rsync_push: "rsync <%= rsync_args %> --delete <%= ssh_host %> <%= exclusions %> <%= from %> <%= ssh_prefix %><%= to %>",
+    rsync_pull: "rsync <%= rsync_args %> <%= ssh_host %> <%= exclusions %> <%= ssh_prefix %><%= from %> <%= to %>",
     ssh: "ssh <%= host %>",
   };
 

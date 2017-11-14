@@ -96,6 +96,7 @@ exports.init = function (grunt) {
                 grunt.log.oklns("ERROR: Invalid sql_replacement.");
             } else {
                 grunt.log.oklns("Adapting " + sql_replacements[i][0] + "->" + sql_replacements[i][1]);
+                output = exports.replace_urls_in_serialized(sql_replacements[i][0], sql_replacements[i][1], output);
                 output = exports.replace_urls_in_string(sql_replacements[i][0], sql_replacements[i][1], output);
             }
         }

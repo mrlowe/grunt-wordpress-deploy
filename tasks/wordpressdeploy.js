@@ -77,8 +77,14 @@ module.exports = function(grunt) {
     grunt.log.subhead("Pulling database from '" + target_options.title + "' into Local");
 
     // Dump Target DB
-    util.db_dump(target_options, target_backup_paths );
+    if (target_options.ssh_host) {
+        util.dump_and_scp(target_options, target_backup_paths );
+    } else {
+        grunt.log.oklns("No ssh_host, can't SCP. Attempting alternative DB dump.");
+        util.db_dump(target_options, target_backup_paths );
+    }
 
+    // Adapt the DB
     util.db_adapt(target_options.url, local_options.url, local_options.sql_replacements, target_backup_paths.file);
 
     // Backup Local DB

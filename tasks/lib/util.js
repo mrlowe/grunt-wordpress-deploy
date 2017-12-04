@@ -9,13 +9,32 @@ exports.init = function (grunt) {
   exports.db_dump = function(config, output_paths) {
     grunt.file.mkdir(output_paths.dir);
 
-    var cmd = exports.mysqldump_cmd(config);
+    var cmd = exports.mysqldump_cmd(config, true);
 
     var output = shell.exec(cmd, {silent: true}).output;
 
     grunt.file.write(output_paths.file, output);
     grunt.log.oklns("Database DUMP succesfully exported to: " + output_paths.file);
   };
+
+  exports.dump_and_scp = function(config, output_paths) {
+      grunt.file.mkdir(output_paths.dir);
+      var cmd = exports.mysqldump_cmd(config);
+      var output = shell.exec(cmd, {silent: true}).stdout;
+      if (output) {
+          grunt.log.oklns(output);
+          return;
+      }
+
+      var scpcmd = exports.mysql_scp_cmd(config, output_paths.file);
+      output =  shell.exec(scpcmd, {silent: true}).stdout;
+      if (output) {
+          grunt.log.oklns(output);
+          return;
+      }
+
+      grunt.log.oklns("Database DUMP succesfully exported to: " + output_paths.file);
+  }
 
   exports.db_import = function(config, src) {
     shell.exec(exports.mysql_cmd(config, src));
@@ -151,7 +170,7 @@ exports.init = function (grunt) {
   };
 
   /* Commands generators */
-  exports.mysqldump_cmd = function(config) {
+  exports.mysqldump_cmd = function(config, no_scp) {
 
     var ignore_str = "";
     if (config.ignore) {
@@ -162,7 +181,11 @@ exports.init = function (grunt) {
         }
     }
 
-    var cmd = grunt.template.process(tpls.mysqldump, {
+    var tpl = tpls.mysqldump_scp;
+    if (no_scp) {
+        tpl = tpls.mysqldump;
+    }
+    var cmd = grunt.template.process(tpl, {
       data: {
         user: config.user,
         pass: config.pass,
@@ -263,13 +286,28 @@ exports.init = function (grunt) {
     return cmd;
   };
 
+  exports.mysql_scp_cmd = function(config, outfile) {
+
+      var cmd = grunt.template.process(tpls.scp, {
+          data: {
+              host: config.ssh_host,
+              source_file: 'grunt-wordpress-deploy.sql',
+              dest_file: outfile
+          }
+      });
+
+      return cmd;
+  }
+
   var tpls = {
     backup_path: "<%= backups_dir %>/<%= env %>/<%= date %>/<%= time %>",
-    mysqldump: "MYSQL_PWD=\"<%= pass %>\" mysqldump -h <%= host %> -u<%= user %> -P<%= port %> --default-character-set=utf8 <%= ignore %> <%= database %>",
+    mysqldump_scp: "MYSQL_PWD=\"<%= pass %>\" mysqldump -h <%= host %> -u<%= user %> -P<%= port %> --default-character-set=utf8 -r grunt-wordpress-deploy.sql <%= ignore %> <%= database %>",
+    mysqldump: "MYSQL_PWD=\"<%= pass %>\" mysqldump -h <%= host %> -u<%= user %> -P<%= port %> --default-character-set=utf8 -r grunt-wordpress-deploy.sql <%= ignore %> <%= database %>",
     mysql: "MYSQL_PWD=\"<%= pass %>\" mysql -h <%= host %> -u <%= user %> -P<%= port %> <%= database %>",
     rsync_push: "rsync <%= rsync_args %> --delete <%= ssh_host %> <%= exclusions %> <%= from %> <%= ssh_prefix %><%= to %>",
     rsync_pull: "rsync <%= rsync_args %> <%= ssh_host %> <%= exclusions %> <%= ssh_prefix %><%= from %> <%= to %>",
     ssh: "ssh <%= host %>",
+    scp: "scp <%= host %>:<%= source_file %> <%= dest_file %>"
   };
 
   return exports;
